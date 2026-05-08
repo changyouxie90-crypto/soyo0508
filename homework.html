@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>MindAR 範例 - 自訂內容</title>
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    
+    <style>
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+        }
+        a-scene {
+            width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0;
+        }
+
+        /* 隱藏 MindAR 預設 UI (載入中、掃描中等) */
+        .mindar-ui-loading,
+        .mindar-ui-error,
+        .mindar-ui-scanning {
+            display: none !important;
+        }
+
+        /* 自訂文字的樣式 */
+        #custom-text {
+            display: none;             /* 預設隱藏，掃描到才顯示 */
+            position: fixed;
+            top: 20px;                 /* 距離頂部 20px */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 15px 25px;
+            font-size: 1.5em;
+            border-radius: 10px;
+            z-index: 9999;
+            pointer-events: none;
+            text-align: center;
+            white-space: pre-line;    /* 支援換行 */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="custom-text">
+        我是湯姆 我是一隻蜥蜴<br>
+    </div>
+
+    <a-scene 
+        mindar-image="imageTargetSrc: targets.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no;" 
+        color-space="sRGB" 
+        renderer="colorManagement: true, physicallyCorrectLights" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false">
+        
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <a-entity mindar-image-target="targetIndex: 0" id="target">
+            </a-entity>
+    </a-scene>
+
+    <script>
+        window.addEventListener("load", () => {
+            const targetEl = document.querySelector("#target");
+            const customDiv = document.querySelector("#custom-text");
+
+            // 當掃描到目標時
+            targetEl.addEventListener("targetFound", () => {
+                customDiv.style.display = "block";
+            });
+
+            // 當目標離開視線時
+            targetEl.addEventListener("targetLost", () => {
+                customDiv.style.display = "none";
+            });
+        });
+    </script>
+</body>
+</html>
